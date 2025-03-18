@@ -16,17 +16,17 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build Docker Image
-        run: docker build -t ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}:latest .
+        run: docker build -t ghcr.io/pimpakarn26/my-bmi-project:latest .  # เปลี่ยนเป็น GitHub username และชื่อ repository ของคุณ
 
-      - name: Verify Vue Build Output
+      - name: Verify React Build Output
         run: |
-          CONTAINER_ID=$(docker create ghcr.io/${{ github.actor }}/${{ github.event.repository.name }}:latest)
-          docker cp $CONTAINER_ID:/usr/share/nginx/html ./dist
+          CONTAINER_ID=$(docker create ghcr.io/pimpakarn26/my-bmi-project:latest)  # ใช้ชื่อ image ให้ถูกต้อง
+          docker cp $CONTAINER_ID:/usr/share/nginx/html ./build  # React ใช้โฟลเดอร์ `build` ไม่ใช่ `dist`
           docker rm -v $CONTAINER_ID
-          ls -la ./dist
+          ls -la ./build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: dist
+          folder: build  # Deploy จากโฟลเดอร์ build ที่ React สร้างขึ้น
